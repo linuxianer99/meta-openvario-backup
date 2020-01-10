@@ -3,6 +3,8 @@ services:
 
 before_install:
 - docker pull crops/poky
+- docker run -d --name ovbuild crops/poky
 
 script:
 - ls -als
+- docker exec ovbuild combo-layer
