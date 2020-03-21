@@ -16,7 +16,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Pull docker
-      run: docker pull linuxianer99/ovlinux-build
+      run: docker pull linuxianer99/ovbuild
     
     - name: Init repo
       run: repo init -u git://github.com/linuxianer99/ovlinux-manifest.git -b warrior
