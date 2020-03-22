@@ -18,7 +18,7 @@ jobs:
       run: docker pull linuxianer99/ovbuild
     
     - name: Show content
-      run: ls -al
+      run: ls -alh
     
     - name: Show dir
       run: pwd
