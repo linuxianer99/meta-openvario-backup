@@ -18,5 +18,10 @@ jobs:
     - name: Pull docker
       run: docker pull linuxianer99/ovbuild
     
+    - name: Show content
+      run: 
+        ls -alh
+        pwd
+      
     - name: Init repo
       run: repo init -u git://github.com/linuxianer99/ovlinux-manifest.git -b warrior
