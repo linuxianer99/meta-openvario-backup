@@ -23,6 +23,10 @@ jobs:
     
     - name: Show dir
       run: pwd
-      
-    - name: Init repo
-      run: repo init -u git://github.com/linuxianer99/ovlinux-manifest.git -b warrior
+    
+    - name: Setup sources
+      run: |
+        mkdir workdir
+        cd workdir
+        repo init -u git://github.com/linuxianer99/ovlinux-manifest.git -b warrior
+        repo sync
