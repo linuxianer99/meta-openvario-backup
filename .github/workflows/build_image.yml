@@ -23,11 +23,6 @@ jobs:
     - name: Show dir
       run: pwd
     
-    - name: Setup dir
-      run: |
-        mkdir workdir
-        cd workdir
-    
     - name: Setup Sources
       run: |
         cd ${{ github.workspace }} 
