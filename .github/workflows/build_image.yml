@@ -31,5 +31,6 @@ jobs:
     
     - name: Setup Sources
       run: |
-        ${{ github.workspace }}/repo init -u git://github.com/linuxianer99/ovlinux-manifest.git -b warrior
-        ${{ github.workspace }}/repo sync
+        cd ${{ github.workspace }} 
+        repo init -u git://github.com/linuxianer99/ovlinux-manifest.git -b warrior
+        repo sync
