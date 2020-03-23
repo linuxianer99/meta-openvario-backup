@@ -25,6 +25,8 @@ jobs:
     
     - name: Setup Sources
       run: |
-        cd ${{ github.workspace }} 
         repo init -u git://github.com/linuxianer99/ovlinux-manifest.git -b warrior
         repo sync
+        
+    - name: Show sources
+      run: ls -alh
