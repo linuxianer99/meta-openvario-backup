@@ -29,4 +29,7 @@ jobs:
         repo sync
         
     - name: Show sources
-      run: ls -alh
+      run: |
+        ls -alh
+        cd poky
+        ls -alh
