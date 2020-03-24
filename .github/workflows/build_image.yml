@@ -35,4 +35,4 @@ jobs:
         ls -alh
     
     - name: Run bitbake
-      run: docker run --rm --name ovbuild -v ${{ github.workspace }}:/workdir linuxianer99/ovlinux-build --workdir=/workdir ./build.sh
+      run: docker run --rm --name ovbuild -v ${{ github.workspace }}:/workdir linuxianer99/ovbuild --workdir=/workdir ./build.sh
