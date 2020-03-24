@@ -33,3 +33,6 @@ jobs:
         ls -alh
         cd poky
         ls -alh
+    
+    - name: Run bitbake
+      run: docker run --rm --name ovbuild -v ${{ github.workspace }}:/workdir linuxianer99/ovlinux-build --workdir=/workdir ./build.sh
