@@ -29,7 +29,7 @@ jobs:
         ls -alh
     
     - name: Run bitbake
-      run: docker run --rm --name ovbuild -v ${{ github.workspace }}:/workdir linuxianer99/ovbuild --workdir=/workdir ./build.sh
+      run: docker run --rm --name ovbuild -v ${{ github.workspace }}:/workdir linuxianer99/ovbuild --workdir=/workdir ./build.sh openvario-7-PQ070 variod
       
     - name: Create release
       id: create_release
