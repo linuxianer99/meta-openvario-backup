@@ -16,13 +16,7 @@ jobs:
     steps:
     - name: Pull docker
       run: docker pull linuxianer99/ovbuild
-    
-    - name: Show content
-      run: ls -alh
-    
-    - name: Show dir
-      run: pwd
-    
+          
     - name: Setup Sources
       run: |
         repo init -u git://github.com/linuxianer99/ovlinux-manifest.git -b warrior
@@ -35,7 +29,7 @@ jobs:
         ls -alh
     
     - name: Run bitbake
-      run: echo "docker run --rm --name ovbuild -v ${{ github.workspace }}:/workdir linuxianer99/ovbuild --workdir=/workdir ./build.sh"
+      run: docker run --rm --name ovbuild -v ${{ github.workspace }}:/workdir linuxianer99/ovbuild --workdir=/workdir ./build.sh
       
     - name: Create release
       id: create_release
