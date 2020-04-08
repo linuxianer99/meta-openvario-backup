@@ -9,13 +9,26 @@ on:
     branches: [ warrior ]
        
 jobs:
-  build:
+  create_release:
+    steps:
+    - name: Create release
+      id: create_release
+      uses: actions/create-release@latest
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+         tag_name: ${{ github.ref }}
+         release_name: Release ${{ github.ref }}
+         draft: true
+         prerelease: true
+ 
+  build_artifacts:
     runs-on: self-hosted
     
     strategy:
       matrix:
-        platform: [openvario-7-PQ070, openvario-7-CH070]
-        version: [openvario-image, openvario-image-testing]
+        platform: [openvario-7-PQ070]
+        version: [openvario-image]
         
     steps:
     - name: Pull docker
@@ -31,31 +44,14 @@ jobs:
         ls -alh
         cd poky
         ls -alh
-    
-    - name: Run bitbake (cleanall)
-      run: docker run --rm --name ovbuild -v ${{ github.workspace }}:/workdir linuxianer99/ovbuild --workdir=/workdir ./build.sh ${{matrix.platform}} ${{matrix.version}} -c cleanall
-      
+
     - name: Run bitbake (build image)
-      run: docker run --rm --name ovbuild -v ${{ github.workspace }}:/workdir linuxianer99/ovbuild --workdir=/workdir ./build.sh ${{matrix.platform}} ${{matrix.version}}
-      
-   
-  publish:
-    runs-on: self-hosted
-    name: Create Github Release
-    needs: [build]
+      run: docker run --rm --name ovbuild -v ${{ github.workspace }}:/workdir linuxianer99/ovbuild --workdir=/workdir ./build.sh ${{matrix.platform}} ${{matrix.version}}   
     
-    steps:
-    - name: Create release
-      id: create_release
-      uses: actions/create-release@latest
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-         tag_name: ${{ github.ref }}
-         release_name: Release ${{ github.ref }}
-         draft: true
-         prerelease: true
-    
+    - name: List build artifacts
+      run: |
+        ls build/tmp/deploy -alh
+        
     - name: Upload Release Asset
       id: upload-release-asset 
       uses: actions/upload-release-asset@v1
