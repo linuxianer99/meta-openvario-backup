@@ -33,10 +33,10 @@ jobs:
         ls -alh
     
     - name: Run bitbake (cleanall)
-      run: docker run --rm --name ovbuild -v ${{ github.workspace }}:/workdir linuxianer99/ovbuild --workdir=/workdir ./build.sh {matrix.platform} -c cleanall
+      run: docker run --rm --name ovbuild -v ${{ github.workspace }}:/workdir linuxianer99/ovbuild --workdir=/workdir ./build.sh ${{matrix.platform}} -c cleanall
       
     - name: Run bitbake (build image)
-      run: docker run --rm --name ovbuild -v ${{ github.workspace }}:/workdir linuxianer99/ovbuild --workdir=/workdir ./build.sh {matrix.platform} {matrix.version}
+      run: docker run --rm --name ovbuild -v ${{ github.workspace }}:/workdir linuxianer99/ovbuild --workdir=/workdir ./build.sh ${{matrix.platform}} ${{matrix.version}}
       
    
   publish:
