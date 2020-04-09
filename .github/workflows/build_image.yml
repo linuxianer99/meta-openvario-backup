@@ -28,8 +28,8 @@ jobs:
     
     strategy:
       matrix:
-        platform: [openvario-7-PQ070]
-        version: [openvario-image]
+        platform: [openvario-7-PQ070, openvario-7-CH070]
+        version: [openvario-image-testing]
         
     steps:
     - name: Pull docker
