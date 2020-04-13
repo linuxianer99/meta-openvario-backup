@@ -51,8 +51,8 @@ jobs:
     
     - name: List build artifacts
       run: |
-        ls build/tmp/deployimages/${{matrix.platform}} -alh
-        ls build/tmp/deployimages/${{matrix.platform}}/*ipk*.tar.gz -alh
+        ls build/tmp/deploy/images/${{matrix.platform}} -alh
+        ls build/tmp/deploy/images/${{matrix.platform}}/*ipk*.tar.gz -alh
         
     - name: Upload Release Asset
       id: upload-release-asset 
@@ -61,7 +61,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
-        asset_path: ./build/tmp/deployimages/${{matrix.platform}}/*ipk*.tar.gz
+        asset_path: ./build/tmp/deploy/images/${{matrix.platform}}/*ipk*.tar.gz
         asset_name: $(cat image_name).tar.gz
         asset_content_type: application/gzip
     
