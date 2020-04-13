@@ -64,7 +64,7 @@ jobs:
       run: |
         ls build/tmp/deploy/images/${{matrix.platform}} -alh
         ls build/tmp/deploy/images/${{matrix.platform}}/*ipk*.tar.gz -alh
-        echo ::set-output name=output_file::$(basename $(cat build/tmp/deploy/images/${{matrix.platform}}/image_name).tar.gz)
+        echo ::set-output name=output_file::$(basename $(cat build/tmp/deploy/images/${{matrix.platform}}/image_name).rootfs.img.gz)
         
     - name: Load Release URL File from release job
       uses: actions/download-artifact@v1
