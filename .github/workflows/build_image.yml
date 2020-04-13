@@ -24,6 +24,7 @@ jobs:
          prerelease: true
  
   build_artifacts:
+    needs: [create_release]
     runs-on: self-hosted
     
     strategy:
