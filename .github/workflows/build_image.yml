@@ -88,7 +88,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.get_release_info.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
-        asset_path: ./build/tmp/deploy/images/${{matrix.platform}}
-        asset_name: ${{ steps.list_build_artifacts.outputs.output_file }}
+        asset_path: ${{ steps.list_build_artifacts.outputs.output_file }}
+        asset_name: output.tgz
         asset_content_type: application/gzip
     
