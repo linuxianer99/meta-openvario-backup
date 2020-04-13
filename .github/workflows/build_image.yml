@@ -60,9 +60,11 @@ jobs:
       run: docker run --rm --name ovbuild -v ${{ github.workspace }}:/workdir linuxianer99/ovbuild --workdir=/workdir ./build.sh ${{matrix.platform}} ${{matrix.version}}   
     
     - name: List build artifacts
+      id: list_build_artifacts
       run: |
         ls build/tmp/deploy/images/${{matrix.platform}} -alh
         ls build/tmp/deploy/images/${{matrix.platform}}/*ipk*.tar.gz -alh
+        echo ::set-output name=output_file::$(cat image_name).tar.gz
         
     - name: Load Release URL File from release job
       uses: actions/download-artifact@v1
@@ -87,6 +89,6 @@ jobs:
       with:
         upload_url: ${{ steps.get_release_info.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
         asset_path: ./build/tmp/deploy/images/${{matrix.platform}}
-        asset_name: $(cat image_name).tar.gz
+        asset_name: ${{ steps.list_build_artifacts.outputs.output_file }}
         asset_content_type: application/gzip
     
