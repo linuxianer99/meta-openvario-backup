@@ -1,0 +1,108 @@
+name: Build openvario image
+
+# Controls when the action will run. Triggers the workflow on push or pull request 
+# events but only for the master branch
+#on:
+#  push:
+#    branches: [ warrior ]
+#  pull_request:
+#    branches: [ warrior ]
+on:
+  push:
+    tags:
+      - '*'
+       
+jobs:
+  create_release:
+    runs-on: self-hosted
+    steps:
+    - name: Branch name
+      id: branch_name
+      run: |
+        echo ::set-output name=SOURCE_NAME::${GITHUB_REF#refs/*/}
+        echo ::set-output name=SOURCE_BRANCH::${GITHUB_REF#refs/heads/}
+        echo ::set-output name=SOURCE_TAG::${GITHUB_REF#refs/tags/}
+    
+    - name: Create release
+      id: create_release
+      uses: actions/create-release@latest
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+         tag_name: ${{ steps.branch_name.outputs.SOURCE_TAG }}
+         release_name: Release ${{ steps.branch_name.outputs.SOURCE_TAG }}
+         draft: true
+         prerelease: true
+    
+    - name: Output Release URL File
+      run: echo "${{ steps.create_release.outputs.upload_url }}" > release_url.txt
+    
+    - name: Save Release URL File for publish
+      uses: actions/upload-artifact@v1
+      with:
+        name: release_url
+        path: release_url.txt
+        
+  build_artifacts:
+    needs: [create_release]
+    runs-on: self-hosted
+    
+    strategy:
+      matrix:
+        platform: [openvario-7-PQ070, openvario-7-CH070]
+        version: [openvario-image-testing]
+        
+    steps:
+    - name: Pull docker
+      run: docker pull linuxianer99/ovbuild
+      
+    - name: Clean workspace
+      run: rm build -rf
+      
+    - name: Setup Sources
+      run: |
+        repo init -u git://github.com/linuxianer99/ovlinux-manifest.git -b warrior
+        repo sync
+        
+    - name: Show sources
+      run: |
+        ls -alh
+        cd poky
+        ls -alh
+        
+    - name: Run bitbake (build image)
+      run: docker run --rm --name ovbuild -v ${{ github.workspace }}:/workdir linuxianer99/ovbuild --workdir=/workdir ./build.sh ${{matrix.platform}} ${{matrix.version}}   
+    
+    - name: List build artifacts
+      id: list_build_artifacts
+      run: |
+        ls build/tmp/deploy/images/${{matrix.platform}} -alh
+        ls build/tmp/deploy/images/${{matrix.platform}}/*ipk*.tar.gz -alh
+        echo ::set-output name=output_file::$(basename $(cat build/tmp/deploy/images/${{matrix.platform}}/image_name).rootfs.img.gz)
+        
+    - name: Load Release URL File from release job
+      uses: actions/download-artifact@v1
+      with:
+        name: release_url
+    
+    - name: Get Release File Name & Upload URL
+      id: get_release_info
+      run: |
+        echo ::set-output name=file_name::${REPOSITORY_NAME##*/}-${TAG_REF_NAME##*/v} # RepositoryName-v1.0.0
+        value=`cat release_url/release_url.txt`
+        echo ::set-output name=upload_url::$value
+      env:
+        TAG_REF_NAME: ${{ github.ref }}
+        REPOSITORY_NAME: ${{ github.repository }}
+    
+    - name: Upload Release Asset
+      id: upload-release-asset 
+      uses: actions/upload-release-asset@latest
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.get_release_info.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+        asset_path: build/tmp/deploy/images/${{matrix.platform}}/${{ steps.list_build_artifacts.outputs.output_file }}
+        asset_name: ${{ steps.list_build_artifacts.outputs.output_file }}
+        asset_content_type: application/gzip
+    
